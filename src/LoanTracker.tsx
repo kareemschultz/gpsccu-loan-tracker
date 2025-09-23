@@ -276,6 +276,13 @@ const LoanHeader = ({ darkMode, setDarkMode, timeFormat, setTimeFormat, original
           >
             {darkMode ? 'Light Mode' : 'Dark Mode'}
           </button>
+          <button
+            onClick={clearAllData}
+            className="rounded-full px-4 sm:px-6 py-2 bg-red-500/80 border border-red-400/50 text-white hover:bg-red-600/90 transition-all duration-300 text-sm font-medium"
+            title="Clear all saved payment data and reset to defaults"
+          >
+            🗑️ Clear Data
+          </button>
         </div>
       </div>
     </div>
@@ -379,6 +386,74 @@ const LoanTracker = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  // localStorage persistence - Load data on app startup
+  useEffect(() => {
+    try {
+      const savedLoanData = localStorage.getItem('gpsccu-loan-data');
+      const savedFinancialData = localStorage.getItem('gpsccu-financial-data');
+      const savedDarkMode = localStorage.getItem('gpsccu-dark-mode');
+      const savedTimeFormat = localStorage.getItem('gpsccu-time-format');
+
+      if (savedLoanData) {
+        const parsedLoanData = JSON.parse(savedLoanData);
+        // Convert startDate string back to Date object
+        parsedLoanData.startDate = new Date(parsedLoanData.startDate);
+        setLoanData(parsedLoanData);
+      }
+
+      if (savedFinancialData) {
+        setFinancialData(JSON.parse(savedFinancialData));
+      }
+
+      if (savedDarkMode) {
+        setDarkMode(JSON.parse(savedDarkMode));
+      }
+
+      if (savedTimeFormat) {
+        setTimeFormat(savedTimeFormat);
+      }
+    } catch (error) {
+      console.warn('Failed to load saved data:', error);
+      // If there's an error loading data, we'll just use the defaults
+    }
+  }, []);
+
+  // Save loan data to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('gpsccu-loan-data', JSON.stringify(loanData));
+    } catch (error) {
+      console.warn('Failed to save loan data:', error);
+    }
+  }, [loanData]);
+
+  // Save financial data to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('gpsccu-financial-data', JSON.stringify(financialData));
+    } catch (error) {
+      console.warn('Failed to save financial data:', error);
+    }
+  }, [financialData]);
+
+  // Save dark mode preference
+  useEffect(() => {
+    try {
+      localStorage.setItem('gpsccu-dark-mode', JSON.stringify(darkMode));
+    } catch (error) {
+      console.warn('Failed to save dark mode preference:', error);
+    }
+  }, [darkMode]);
+
+  // Save time format preference
+  useEffect(() => {
+    try {
+      localStorage.setItem('gpsccu-time-format', timeFormat);
+    } catch (error) {
+      console.warn('Failed to save time format preference:', error);
+    }
+  }, [timeFormat]);
 
   // Enhanced scenarios with 6-month focus
   const scenarios = useMemo(() => {
@@ -609,6 +684,53 @@ const LoanTracker = () => {
     }));
 
     showInfoModal('Payment Deleted', 'Payment has been successfully deleted.');
+  };
+
+  // Clear all saved data and reset to defaults
+  const clearAllData = () => {
+    if (!confirm('⚠️ WARNING: This will permanently delete all your saved payment data, loan information, and preferences. This action cannot be undone. Are you sure you want to continue?')) {
+      return;
+    }
+
+    try {
+      // Clear localStorage
+      localStorage.removeItem('gpsccu-loan-data');
+      localStorage.removeItem('gpsccu-financial-data');
+      localStorage.removeItem('gpsccu-dark-mode');
+      localStorage.removeItem('gpsccu-time-format');
+
+      // Reset all state to defaults
+      setLoanData({
+        originalAmount: 5000000,
+        currentBalance: 5000000,
+        monthlyPayment: 111222,
+        monthlyRate: 0.01,
+        startDate: new Date('2025-10-28'),
+        payments: [],
+        totalInterestPaid: 0,
+        totalPrincipalPaid: 0
+      });
+
+      setFinancialData({
+        monthlyIncome: 800000,
+        emergencyFund: 2000000,
+        investmentPortfolio: 1500000,
+        targetExtraPayment: 600000,
+        currentSavings: 150000,
+        expectedGratuity: 1200000,
+        nextGratuityDate: '2025-12-15'
+      });
+
+      setDarkMode(false);
+      setTimeFormat('years');
+      setActiveTab('dashboard');
+
+      showInfoModal('Data Cleared Successfully',
+        'All saved data has been cleared and the application has been reset to default settings. You can now start fresh with your loan tracking.'
+      );
+    } catch (error) {
+      showInfoModal('Error', 'An error occurred while clearing data. Please try refreshing the page.');
+    }
   };
 
   // Calculate next payment date (6 months from last extra payment or loan start)
