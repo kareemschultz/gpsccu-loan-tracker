@@ -2,6 +2,7 @@
   "name": "gpsccu-loan-tracker",
   "private": true,
   "version": "1.0.0",
+  "homepage": "https://kareemschultz.github.io/gpsccu-loan-tracker/",
   "type": "module",
   "scripts": {
     "dev": "vite",
