@@ -378,6 +378,9 @@ const LoanTracker = () => {
   const { calculateLoan, calculateDetailedLoan } = useLoanCalculations();
   const { formatCurrency, formatLargeNumber, formatTime, formatTimeShort } = useFormatters(timeFormat);
 
+  // Flag to prevent infinite loops during initial load
+  const [isInitialized, setIsInitialized] = useState(false);
+
   // Dark mode effect
   useEffect(() => {
     if (darkMode) {
@@ -417,43 +420,54 @@ const LoanTracker = () => {
       console.warn('Failed to load saved data:', error);
       // If there's an error loading data, we'll just use the defaults
     }
+
+    // Set initialized flag to allow saving useEffects to run
+    setIsInitialized(true);
   }, []);
 
-  // Save loan data to localStorage whenever it changes
+  // Save loan data to localStorage whenever it changes (only after initialization)
   useEffect(() => {
+    if (!isInitialized) return;
+
     try {
       localStorage.setItem('gpsccu-loan-data', JSON.stringify(loanData));
     } catch (error) {
       console.warn('Failed to save loan data:', error);
     }
-  }, [loanData]);
+  }, [loanData, isInitialized]);
 
-  // Save financial data to localStorage whenever it changes
+  // Save financial data to localStorage whenever it changes (only after initialization)
   useEffect(() => {
+    if (!isInitialized) return;
+
     try {
       localStorage.setItem('gpsccu-financial-data', JSON.stringify(financialData));
     } catch (error) {
       console.warn('Failed to save financial data:', error);
     }
-  }, [financialData]);
+  }, [financialData, isInitialized]);
 
-  // Save dark mode preference
+  // Save dark mode preference (only after initialization)
   useEffect(() => {
+    if (!isInitialized) return;
+
     try {
       localStorage.setItem('gpsccu-dark-mode', JSON.stringify(darkMode));
     } catch (error) {
       console.warn('Failed to save dark mode preference:', error);
     }
-  }, [darkMode]);
+  }, [darkMode, isInitialized]);
 
-  // Save time format preference
+  // Save time format preference (only after initialization)
   useEffect(() => {
+    if (!isInitialized) return;
+
     try {
       localStorage.setItem('gpsccu-time-format', timeFormat);
     } catch (error) {
       console.warn('Failed to save time format preference:', error);
     }
-  }, [timeFormat]);
+  }, [timeFormat, isInitialized]);
 
   // Enhanced scenarios with 6-month focus
   const scenarios = useMemo(() => {
