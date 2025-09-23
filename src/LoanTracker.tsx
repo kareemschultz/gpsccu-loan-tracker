@@ -756,11 +756,138 @@ Recommendation: ${investmentAnalysis.recommendation === 'loan' ? 'Focus on loan 
             </div>
 
             {/* Payment Countdown */}
-            <PaymentCountdown 
+            <PaymentCountdown
               nextPaymentDate={getNextPaymentDate()}
               targetAmount={financialData.targetExtraPayment}
               currentSavings={financialData.currentSavings}
             />
+
+            {/* Enhanced Remaining Balance Card */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-6">
+                <h2 className="text-xl font-bold mb-2 flex items-center">
+                  💰 Remaining Balance Analysis
+                </h2>
+                <p className="text-green-100">Track your loan paydown progress with smart insights</p>
+              </div>
+
+              <div className="p-6 space-y-6">
+                {/* Main Balance Display */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="text-center space-y-4">
+                    <div className="text-4xl font-bold text-gray-900 dark:text-gray-100">
+                      {formatLargeNumber(loanData.currentBalance)}
+                    </div>
+                    <div className="text-lg text-gray-600 dark:text-gray-400">Current Balance</div>
+
+                    {/* Balance Progress Bar */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                        <span>Paid Down</span>
+                        <span>{Math.round(progress.percent)}% Complete</span>
+                      </div>
+                      <ProgressBar value={progress.percent} className="h-4">
+                        {Math.round(progress.percent)}%
+                      </ProgressBar>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                          {formatLargeNumber(progress.paidAmount)}
+                        </div>
+                        <div className="text-sm text-blue-800 dark:text-blue-300">Amount Paid</div>
+                      </div>
+
+                      <div className="bg-red-50 dark:bg-red-900/30 rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                          {formatLargeNumber(loanData.totalInterestPaid)}
+                        </div>
+                        <div className="text-sm text-red-800 dark:text-red-300">Interest Paid</div>
+                      </div>
+                    </div>
+
+                    {/* Payoff Timeline */}
+                    <div className="bg-purple-50 dark:bg-purple-900/30 rounded-lg p-4">
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-purple-600 dark:text-purple-400">
+                          {formatTime(calculationResult.withExtra.months)}
+                        </div>
+                        <div className="text-sm text-purple-800 dark:text-purple-300">
+                          Estimated Time to Payoff
+                        </div>
+                        <div className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                          Saves {formatTime(calculationResult.timeSaved)} vs minimum payments
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Milestones */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Payment Milestones</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {[
+                      { threshold: 25, icon: '🎯', color: 'blue' },
+                      { threshold: 50, icon: '🏆', color: 'purple' },
+                      { threshold: 75, icon: '🚀', color: 'green' }
+                    ].map((milestone, index) => {
+                      const isAchieved = progress.percent >= milestone.threshold;
+                      return (
+                        <div key={index} className={`rounded-lg p-4 text-center border-2 ${
+                          isAchieved
+                            ? `bg-${milestone.color}-50 dark:bg-${milestone.color}-900/30 border-${milestone.color}-500`
+                            : 'bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600'
+                        }`}>
+                          <div className="text-2xl mb-2">{milestone.icon}</div>
+                          <div className={`font-semibold ${
+                            isAchieved
+                              ? `text-${milestone.color}-600 dark:text-${milestone.color}-400`
+                              : 'text-gray-500'
+                          }`}>
+                            {milestone.threshold}% Complete
+                          </div>
+                          {isAchieved && (
+                            <Badge variant="success">Achieved!</Badge>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Interest vs Principal Breakdown */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Payment Breakdown</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Next Payment (Principal)</span>
+                        <span className="font-semibold">{formatCurrency(loanData.monthlyPayment - (loanData.currentBalance * loanData.monthlyRate))}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Next Payment (Interest)</span>
+                        <span className="font-semibold">{formatCurrency(loanData.currentBalance * loanData.monthlyRate)}</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-4">
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-yellow-600 dark:text-yellow-400">
+                          {((loanData.monthlyPayment - (loanData.currentBalance * loanData.monthlyRate)) / loanData.monthlyPayment * 100).toFixed(1)}%
+                        </div>
+                        <div className="text-sm text-yellow-800 dark:text-yellow-300">
+                          Goes to Principal
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Enhanced Progress Section */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -1018,6 +1145,240 @@ Completion Date: ${formatTime(calculationResult.withExtra.months)} from start`)}
                     </div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">
                       Diversification recommended
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Enhanced Debt-to-Income Ratio Calculator & Financial Health Dashboard */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-6">
+                <h2 className="text-xl font-bold mb-2 flex items-center">
+                  📊 Advanced Financial Health Analysis
+                </h2>
+                <p className="text-teal-100">Comprehensive debt-to-income ratios and financial wellness indicators</p>
+              </div>
+
+              <div className="p-6 space-y-6">
+                {/* Debt-to-Income Ratio Analysis */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Debt-to-Income Ratios</h3>
+
+                    {/* Current Loan DTI */}
+                    <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-lg p-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium text-blue-800 dark:text-blue-200">Housing/Loan DTI</span>
+                        <span className={`font-bold text-lg ${
+                          cashFlowAnalysis.loanToIncomeRatio <= 28
+                            ? 'text-green-600'
+                            : cashFlowAnalysis.loanToIncomeRatio <= 36
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
+                        }`}>
+                          {cashFlowAnalysis.loanToIncomeRatio.toFixed(1)}%
+                        </span>
+                      </div>
+                      <ProgressBar
+                        value={Math.min(cashFlowAnalysis.loanToIncomeRatio, 50)}
+                        className="h-2"
+                      />
+                      <div className="text-xs text-blue-600 dark:text-blue-300 mt-1">
+                        Ideal: ≤28% | Max recommended: ≤36%
+                      </div>
+                    </div>
+
+                    {/* Total DTI (including estimated other debts) */}
+                    <div className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 rounded-lg p-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium text-purple-800 dark:text-purple-200">Estimated Total DTI</span>
+                        <span className={`font-bold text-lg ${
+                          (cashFlowAnalysis.loanToIncomeRatio + 8) <= 36
+                            ? 'text-green-600'
+                            : (cashFlowAnalysis.loanToIncomeRatio + 8) <= 43
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
+                        }`}>
+                          {(cashFlowAnalysis.loanToIncomeRatio + 8).toFixed(1)}%
+                        </span>
+                      </div>
+                      <ProgressBar
+                        value={Math.min(cashFlowAnalysis.loanToIncomeRatio + 8, 50)}
+                        className="h-2"
+                      />
+                      <div className="text-xs text-purple-600 dark:text-purple-300 mt-1">
+                        Includes estimated credit cards, auto loans, etc.
+                      </div>
+                    </div>
+
+                    {/* Financial Flexibility Score */}
+                    <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 rounded-lg p-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium text-green-800 dark:text-green-200">Financial Flexibility</span>
+                        <span className="font-bold text-lg text-green-600">
+                          {(((cashFlowAnalysis.disposableIncome / financialData.monthlyIncome) * 100)).toFixed(0)}%
+                        </span>
+                      </div>
+                      <ProgressBar
+                        value={(cashFlowAnalysis.disposableIncome / financialData.monthlyIncome) * 100}
+                        className="h-2"
+                      />
+                      <div className="text-xs text-green-600 dark:text-green-300 mt-1">
+                        Available for savings, investments & discretionary spending
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Financial Health Score Card */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Financial Health Score</h3>
+
+                    <div className="bg-gradient-to-br from-indigo-50 to-cyan-50 dark:from-indigo-900/30 dark:to-cyan-900/30 rounded-lg p-6 text-center">
+                      <div className="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+                        {(() => {
+                          let score = 100;
+                          // DTI impact
+                          if (cashFlowAnalysis.loanToIncomeRatio > 36) score -= 30;
+                          else if (cashFlowAnalysis.loanToIncomeRatio > 28) score -= 15;
+
+                          // Emergency fund impact
+                          if (cashFlowAnalysis.emergencyFundMonths < 3) score -= 25;
+                          else if (cashFlowAnalysis.emergencyFundMonths < 6) score -= 10;
+
+                          // Investment portfolio impact
+                          if (financialData.investmentPortfolio < financialData.monthlyIncome * 3) score -= 15;
+
+                          return Math.max(score, 0);
+                        })()}
+                      </div>
+                      <div className="text-indigo-800 dark:text-indigo-300 font-medium">Overall Score</div>
+                    </div>
+
+                    {/* Health Indicators */}
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        {
+                          label: 'Emergency Fund',
+                          value: cashFlowAnalysis.emergencyFundMonths >= 6 ? '✅' : cashFlowAnalysis.emergencyFundMonths >= 3 ? '⚠️' : '❌',
+                          status: cashFlowAnalysis.emergencyFundMonths >= 6 ? 'Excellent' : cashFlowAnalysis.emergencyFundMonths >= 3 ? 'Good' : 'Needs Work'
+                        },
+                        {
+                          label: 'Debt Ratio',
+                          value: cashFlowAnalysis.loanToIncomeRatio <= 28 ? '✅' : cashFlowAnalysis.loanToIncomeRatio <= 36 ? '⚠️' : '❌',
+                          status: cashFlowAnalysis.loanToIncomeRatio <= 28 ? 'Excellent' : cashFlowAnalysis.loanToIncomeRatio <= 36 ? 'Good' : 'High'
+                        },
+                        {
+                          label: 'Savings Rate',
+                          value: (cashFlowAnalysis.disposableIncome / financialData.monthlyIncome) > 0.2 ? '✅' : (cashFlowAnalysis.disposableIncome / financialData.monthlyIncome) > 0.1 ? '⚠️' : '❌',
+                          status: (cashFlowAnalysis.disposableIncome / financialData.monthlyIncome) > 0.2 ? 'Great' : (cashFlowAnalysis.disposableIncome / financialData.monthlyIncome) > 0.1 ? 'Good' : 'Low'
+                        },
+                        {
+                          label: 'Investment Growth',
+                          value: financialData.investmentPortfolio > financialData.monthlyIncome * 6 ? '✅' : financialData.investmentPortfolio > financialData.monthlyIncome * 3 ? '⚠️' : '❌',
+                          status: financialData.investmentPortfolio > financialData.monthlyIncome * 6 ? 'Strong' : financialData.investmentPortfolio > financialData.monthlyIncome * 3 ? 'Growing' : 'Start Now'
+                        }
+                      ].map((indicator, index) => (
+                        <div key={index} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 text-center">
+                          <div className="text-2xl mb-1">{indicator.value}</div>
+                          <div className="text-xs font-medium text-gray-600 dark:text-gray-300">{indicator.label}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">{indicator.status}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actionable Recommendations */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">💡 Personalized Recommendations</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {(() => {
+                      const recommendations = [];
+
+                      if (cashFlowAnalysis.loanToIncomeRatio > 36) {
+                        recommendations.push({
+                          type: 'warning',
+                          title: 'High Debt-to-Income Ratio',
+                          message: 'Consider increasing income or reducing other debts before taking on additional debt.',
+                          action: 'Focus on paying down this loan aggressively'
+                        });
+                      }
+
+                      if (cashFlowAnalysis.emergencyFundMonths < 6) {
+                        recommendations.push({
+                          type: 'info',
+                          title: 'Build Emergency Fund',
+                          message: `Increase emergency fund to ${formatCurrency((financialData.monthlyIncome * 6) - financialData.emergencyFund)} to reach 6 months coverage.`,
+                          action: 'Balance loan payments with emergency savings'
+                        });
+                      }
+
+                      if ((cashFlowAnalysis.disposableIncome / financialData.monthlyIncome) > 0.3) {
+                        recommendations.push({
+                          type: 'success',
+                          title: 'Strong Cash Flow',
+                          message: 'You have excellent financial flexibility to accelerate loan payments.',
+                          action: 'Consider increasing extra payments to $800K every 6 months'
+                        });
+                      }
+
+                      if (investmentAnalysis.loanPaymentROI > 12) {
+                        recommendations.push({
+                          type: 'success',
+                          title: 'Excellent Loan Payment ROI',
+                          message: `Your loan payments are earning ${investmentAnalysis.loanPaymentROI.toFixed(1)}% equivalent return.`,
+                          action: 'Prioritize loan payments over low-yield investments'
+                        });
+                      }
+
+                      return recommendations.slice(0, 4).map((rec, index) => (
+                        <Alert key={index} type={rec.type}>
+                          <div className="font-semibold mb-1">{rec.title}</div>
+                          <div className="text-sm mb-2">{rec.message}</div>
+                          <div className="text-xs font-medium italic">{rec.action}</div>
+                        </Alert>
+                      ));
+                    })()}
+                  </div>
+                </div>
+
+                {/* Monthly Cash Flow Breakdown */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">💰 Monthly Cash Flow Analysis</h3>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Gross Income</span>
+                        <span className="font-semibold text-green-600">{formatCurrency(financialData.monthlyIncome)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Loan Payment</span>
+                        <span className="font-semibold text-blue-600">-{formatCurrency(loanData.monthlyPayment)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Est. Other Expenses</span>
+                        <span className="font-semibold text-gray-600">-{formatCurrency(financialData.monthlyIncome * 0.6)}</span>
+                      </div>
+                      <div className="border-t pt-2 flex justify-between text-lg font-bold">
+                        <span>Available for Savings/Extra Payments</span>
+                        <span className={`${cashFlowAnalysis.disposableIncome > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {formatCurrency(cashFlowAnalysis.disposableIncome)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-lg p-4">
+                      <h4 className="font-semibold text-emerald-800 dark:text-emerald-200 mb-3">Optimization Opportunity</h4>
+                      <div className="text-sm text-emerald-700 dark:text-emerald-300">
+                        <div>Current extra payment target: {formatCurrency(financialData.targetExtraPayment)} every 6 months</div>
+                        <div className="mt-2">Monthly savings needed: {formatCurrency(financialData.targetExtraPayment / 6)}</div>
+                        <div className="mt-2">
+                          {cashFlowAnalysis.disposableIncome >= (financialData.targetExtraPayment / 6)
+                            ? "✅ You can comfortably meet this target"
+                            : `❌ Consider reducing target to ${formatCurrency(cashFlowAnalysis.disposableIncome * 6)} every 6 months`}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
