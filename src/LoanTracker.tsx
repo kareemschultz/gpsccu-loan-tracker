@@ -243,7 +243,7 @@ const useFormatters = (timeFormat) => {
 };
 
 // Enhanced header component
-const LoanHeader = ({ darkMode, setDarkMode, timeFormat, setTimeFormat, originalAmount, formatLargeNumber }) => (
+const LoanHeader = ({ darkMode, setDarkMode, timeFormat, setTimeFormat, originalAmount, formatLargeNumber, clearAllData }) => (
   <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 p-6 sm:p-8 mb-6 sm:mb-8 shadow-2xl">
     <div className="absolute inset-0 bg-black/20 dark:bg-black/40"></div>
     <div className="relative z-10 text-white">
@@ -332,6 +332,7 @@ const LoanTracker = () => {
   const [timeFormat, setTimeFormat] = useState('years');
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', content: '' });
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Enhanced loan data with financial planning
   const [loanData, setLoanData] = useState({
@@ -378,8 +379,7 @@ const LoanTracker = () => {
   const { calculateLoan, calculateDetailedLoan } = useLoanCalculations();
   const { formatCurrency, formatLargeNumber, formatTime, formatTimeShort } = useFormatters(timeFormat);
 
-  // Flag to prevent infinite loops during initial load
-  const [isInitialized, setIsInitialized] = useState(false);
+  // Flag to prevent infinite loops during initial load (already declared above)
 
   // Dark mode effect
   useEffect(() => {
@@ -810,13 +810,14 @@ const LoanTracker = () => {
     }`}>
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 max-w-7xl">
         
-        <LoanHeader 
+        <LoanHeader
           darkMode={darkMode}
           setDarkMode={setDarkMode}
           timeFormat={timeFormat}
           setTimeFormat={setTimeFormat}
           originalAmount={loanData.originalAmount}
           formatLargeNumber={formatLargeNumber}
+          clearAllData={clearAllData}
         />
 
         <Modal 
