@@ -25,7 +25,7 @@ This project is configured for automatic deployment to GitHub Pages via GitHub A
 
 1. Push to main branch
 2. GitHub Actions will build and deploy automatically
-3. Access at: https://yourusername.github.io/gpsccu-loan-tracker
+3. Access at: https://kareemschultz.github.io/gpsccu-loan-tracker
 
 ## Technologies
 
