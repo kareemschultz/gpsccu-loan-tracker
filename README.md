@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/GPSCCU-Financial%20Platform-2563eb?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQxIDAtOC0zLjU5LTgtOHMzLjU5LTggOC04IDggMy41OSA4IDgtMy41OSA4LTggNHptLjMxLTguODZjLTEuNzctLjQ1LTIuMzQtLjk0LTIuMzQtMS42NyAwLS44NC43OS0xLjQzIDIuMS0xLjQzIDEuMzggMCAxLjkuNjYgMS45NCAxLjY0aDEuNzFjLS4wNS0xLjM0LS44Ny0yLjU3LTIuNDktMi45N1YyLjVoLTIuMzR2MS41OGMtMS41MS4zMi0yLjcyIDEuMy0yLjcyIDIuNTEgMCAxLjYgMS4zMiAyLjQgMy4yOCAyLjg4IDEuNzYuNDMgMi4xMS4wNiAyLjExIDEuNjUgMCAuNDctLjMzIDEuMjItMS44NSAxLjIyLTEuNDkgMC0yLjA3LS42My0yLjE1LTEuNjRoLTEuN2MuMDkgMS43MyAxLjM5IDIuNyAyLjgxIDMuMDJ2MS42aDIuMzR2LTEuNThjMS41Mi0uMjkgMi43Mi0xLjE2IDIuNzItMi41MiAwLTEuOTctMS41My0yLjY4LTMuMzEtMy4xNHoiLz48L3N2Zz4=&logoColor=white" alt="GPSCCU Financial Platform" />
+  <img src="https://img.shields.io/badge/FinTrack-Personal%20Finance%20Platform-2563eb?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQxIDAtOC0zLjU5LTgtOHMzLjU5LTggOC04IDggMy41OSA4IDgtMy41OSA4LTggNHptLjMxLTguODZjLTEuNzctLjQ1LTIuMzQtLjk0LTIuMzQtMS42NyAwLS44NC43OS0xLjQzIDIuMS0xLjQzIDEuMzggMCAxLjkuNjYgMS45NCAxLjY0aDEuNzFjLS4wNS0xLjM0LS44Ny0yLjU3LTIuNDktMi45N1YyLjVoLTIuMzR2MS41OGMtMS41MS4zMi0yLjcyIDEuMy0yLjcyIDIuNTEgMCAxLjYgMS4zMiAyLjQgMy4yOCAyLjg4IDEuNzYuNDMgMi4xMS4wNiAyLjExIDEuNjUgMCAuNDctLjMzIDEuMjItMS44NSAxLjIyLTEuNDkgMC0yLjA3LS42My0yLjE1LTEuNjRoLTEuN2MuMDkgMS43MyAxLjM5IDIuNyAyLjgxIDMuMDJ2MS42aDIuMzR2LTEuNThjMS41Mi0uMjkgMi43Mi0xLjE2IDIuNzItMi41MiAwLTEuOTctMS41My0yLjY4LTMuMzEtMy4xNHoiLz48L3N2Zz4=&logoColor=white" alt="FinTrack — Personal Finance Platform" />
 </p>
 
-<h1 align="center">🏦 GPSCCU Financial Management Platform</h1>
+<h1 align="center">💰 FinTrack — Personal Finance Platform</h1>
 
 <p align="center">
-  <strong>A comprehensive financial management and loan tracking platform built for the Guyana Public Service Co-operative Credit Union</strong>
+  <strong>Track loans, plan payments, and build your path to financial freedom.</strong>
 </p>
 
 <p align="center">
@@ -52,23 +52,25 @@
 
 ## 📖 About
 
-**GPSCCU Financial Management Platform** is a full-stack web application designed to empower members of the [Guyana Public Service Co-operative Credit Union](https://gpsccu.com/) — and Guyanese borrowers in general — to take control of their finances. While it started as a loan tracker, the platform has evolved into a comprehensive financial management tool.
+**FinTrack** is a full-stack personal finance management platform that helps you take control of your debt and plan your way to financial freedom. It combines loan portfolio tracking, intelligent payment planning, scenario modelling, and rich analytics into a single, polished application.
+
+The platform ships pre-configured for the **Guyanese market** — with GYD as the default currency and seven major local financial institutions already seeded — but its architecture is currency- and locale-agnostic, making it easy to adapt for any market.
 
 ### What It Does
 
-- **Loan Portfolio Management** — Track multiple loans across Guyanese financial institutions with real-time balance tracking and progress visualization
-- **Payment Recording & Analysis** — Log every payment with categorized sources (salary, gratuity, bonus, investment) and automatic principal/interest breakdown
-- **Financial Planning** — Optimize payment strategies around Guyana's unique gratuity cycles with intelligent 6-month planning tools
-- **Scenario Modeling** — Compare "what-if" payment strategies to find the fastest, cheapest path to debt freedom
-- **Analytics & Insights** — Visualize your financial health with interactive charts, projections, and a proprietary health score algorithm
-- **Professional Reporting** — Generate and export PDF and CSV reports for personal records or financial advisor consultations
+- **Loan Portfolio Management** — Track multiple loans across financial institutions with real-time balance tracking and progress visualisation
+- **Payment Recording & Analysis** — Log every payment with categorised sources (salary, gratuity, bonus, investment) and automatic principal/interest breakdown
+- **Financial Planning** — Optimise payment strategies with intelligent 6-month planning tools aligned to your income cycle
+- **Scenario Modelling** — Compare "what-if" payment strategies to find the fastest, cheapest path to debt freedom
+- **Analytics & Insights** — Visualise your financial health with interactive charts, projections, and a proprietary health score algorithm
+- **Professional Reporting** — Generate and export PDF and CSV reports for personal records or financial adviser consultations
 
 ### Who It's For
 
-- 🇬🇾 Guyanese public servants managing vehicle loans
-- 🏦 Credit union members tracking multiple obligations
-- 💼 Anyone seeking structured financial planning tools
-- 📊 Users who want data-driven insights into their debt payoff journey
+- 💼 Anyone managing one or more loans and seeking structured payoff planning
+- 📊 Data-driven individuals who want insights into their debt-free journey
+- 🇬🇾 Guyanese borrowers — pre-configured with local lenders and GYD currency
+- 🏦 Credit union and bank customers tracking multiple obligations
 
 ---
 
@@ -87,7 +89,7 @@
 | Feature | Description |
 |---------|-------------|
 | Multi-Loan Support | Track unlimited loans simultaneously |
-| Lender Integration | 7 pre-configured Guyanese financial institutions |
+| Lender Integration | 7 pre-configured Guyanese financial institutions (extensible) |
 | Real-Time Balances | Automatic balance updates when payments are recorded |
 | Interest Tracking | Annual and monthly interest rate calculations |
 | Loan Lifecycle | Active/paid-off status management with payoff date tracking |
@@ -96,7 +98,7 @@
 ### 💳 Payment Tracking
 | Feature | Description |
 |---------|-------------|
-| Regular & Extra Payments | Categorize payment types for accurate analysis |
+| Regular & Extra Payments | Categorise payment types for accurate analysis |
 | Payment Sources | Track origin: salary, gratuity, bonus, investment, savings |
 | Auto-Split | Automatic principal vs. interest portion calculation |
 | Balance Sync | Loan balances update automatically on payment recording |
@@ -106,19 +108,19 @@
 | Feature | Description |
 |---------|-------------|
 | Financial Health Score | Proprietary 0–850 score based on progress, payments, and cushion |
-| Payoff Projections | Amortization-based timeline predictions per loan |
+| Payoff Projections | Amortisation-based timeline predictions per loan |
 | Loan Comparison | Side-by-side analysis of all loans (rates, balances, progress) |
-| Multi-Loan Charts | Visualize projected balances across all loans over time |
+| Multi-Loan Charts | Visualise projected balances across all loans over time |
 | Correlation Analysis | See how extra payments correlate with interest savings |
 | Interactive Charts | Bar, pie, area, and line charts powered by Recharts |
 
 ### 🗓️ Financial Planning
 | Feature | Description |
 |---------|-------------|
-| 6-Month Strategy | Plan payment schedules aligned with gratuity cycles |
-| Extra Payment Optimization | Calculate optimal extra payment amounts and timing |
+| 6-Month Strategy | Plan payment schedules aligned with your income cycles |
+| Extra Payment Optimisation | Calculate optimal extra payment amounts and timing |
 | Gratuity Tracking | Track expected gratuity dates and amounts |
-| Amortization Tables | Month-by-month breakdown of planned payments |
+| Amortisation Tables | Month-by-month breakdown of planned payments |
 | Payment Calendar | See upcoming payments and milestones |
 
 ### 🔄 Scenario Comparison
@@ -141,19 +143,19 @@
 | Feature | Description |
 |---------|-------------|
 | Dark Mode | System-aware theme with manual toggle |
-| Responsive Design | Mobile, tablet, and desktop optimized layouts |
+| Responsive Design | Mobile, tablet, and desktop optimised layouts |
 | Sidebar Navigation | Collapsible sidebar with active state indicators |
 | Toast Notifications | Non-intrusive feedback via Sonner |
 | Loading States | Skeleton loaders and suspense boundaries |
 | Accessibility | ARIA-compliant components via shadcn/ui |
 
-### ⚙️ Settings & Personalization
+### ⚙️ Settings & Personalisation
 | Feature | Description |
 |---------|-------------|
 | Profile Management | Update name, email, and account details |
 | Financial Profile | Set income, emergency fund, investment portfolio targets |
 | Currency Preference | Default GYD with configurable display |
-| Date Format | Customizable date display format |
+| Date Format | Customisable date display format |
 | Theme Selection | Light, dark, or system-following theme |
 
 ---
@@ -414,7 +416,7 @@ erDiagram
 | **Node.js** | 20+ | JavaScript runtime |
 | **Bun** *(recommended)* | Latest | Fast package manager & runtime |
 | **PostgreSQL** | 16+ | Primary database |
-| **Docker** *(optional)* | Latest | Containerized deployment |
+| **Docker** *(optional)* | Latest | Containerised deployment |
 
 ### Quick Start (Development)
 
@@ -437,7 +439,7 @@ cp .env.example .env
 # 5. Push database schema
 bun run db:push
 
-# 6. Seed initial data (Guyanese lenders)
+# 6. Seed initial data (pre-configured lenders)
 bun run db:seed
 
 # 7. Start development server
@@ -533,7 +535,7 @@ All API routes are RESTful and require JWT authentication (except auth and regis
   "monthlyPayment": 120000,
   "startDate": "2024-01-15",
   "termMonths": 60,
-  "notes": "Vehicle loan from GPSCCU"
+  "notes": "Vehicle loan"
 }
 ```
 
@@ -620,7 +622,7 @@ gpsccu-loan-tracker/
 ├── 📄 eslint.config.mjs           # ESLint configuration
 │
 ├── 📂 db/
-│   ├── 📄 init.sql                # Database initialization SQL
+│   ├── 📄 init.sql                # Database initialisation SQL
 │   └── 📄 seed.ts                 # Lender seed data script
 │
 ├── 📂 public/                     # Static assets
@@ -635,7 +637,7 @@ gpsccu-loan-tracker/
     │   ├── 📄 actions.ts          # Server actions
     │   │
     │   ├── 📂 (auth)/            # Auth route group
-    │   │   ├── 📄 layout.tsx      # Centered auth layout
+    │   │   ├── 📄 layout.tsx      # Centred auth layout
     │   │   ├── 📂 login/          # Login page
     │   │   └── 📂 register/       # Registration page
     │   │
@@ -745,9 +747,9 @@ bun run db:studio
 
 ---
 
-## 🏦 Supported Lenders
+## 🏦 Pre-Configured Lenders
 
-The platform comes pre-configured with major Guyanese financial institutions:
+FinTrack ships with major Guyanese financial institutions ready to go:
 
 | Institution | Short Name | Default Rate |
 |-------------|------------|:------------:|
@@ -759,6 +761,8 @@ The platform comes pre-configured with major Guyanese financial institutions:
 | Guyana National Co-operative Bank | GNCB | 12.50% |
 | Hand-in-Hand Trust Corporation | HIH | 13.00% |
 | Other | Other | 15.00% |
+
+> Custom lenders can be added via the seed script or directly in the database.
 
 ---
 
@@ -805,7 +809,6 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ## 🙏 Acknowledgments
 
-- **[GPSCCU](https://gpsccu.com/)** — Guyana Public Service Co-operative Credit Union, the inspiration for this platform
 - **[Next.js](https://nextjs.org/)** — The React framework powering the application
 - **[shadcn/ui](https://ui.shadcn.com/)** — Beautiful, accessible UI components
 - **[Drizzle ORM](https://orm.drizzle.team/)** — Type-safe database toolkit

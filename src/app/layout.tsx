@@ -29,9 +29,9 @@ export const metadata: Metadata = {
   keywords: [
     "loan tracker",
     "financial management",
-    "GPSCCU",
+    "FinTrack",
     "Guyana",
-    "credit union",
+    "personal finance",
     "payment tracking",
     "loan calculator",
     "debt payoff",

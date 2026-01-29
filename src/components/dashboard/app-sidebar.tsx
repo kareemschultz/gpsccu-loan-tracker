@@ -64,12 +64,12 @@ export function AppSidebar({ user }: AppSidebarProps) {
       <SidebarHeader className="border-b border-sidebar-border">
         <Link href="/" className="flex items-center gap-3 px-2 py-3 transition-opacity hover:opacity-80">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm shadow-sm">
-            GF
+            FT
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">GPSCCU Finance</span>
+            <span className="text-sm font-semibold">FinTrack</span>
             <span className="text-xs text-muted-foreground">
-              Financial Platform
+              Personal Finance
             </span>
           </div>
         </Link>

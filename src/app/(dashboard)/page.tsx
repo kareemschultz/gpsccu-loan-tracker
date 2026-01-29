@@ -84,8 +84,8 @@ export default async function DashboardPage() {
             </div>
             <h3 className="text-lg font-semibold mb-2">No loans yet</h3>
             <p className="text-muted-foreground text-center max-w-sm mb-6">
-              Start tracking your loans from GPSCCU, GBTI, Republic Bank, and
-              other Guyanese financial institutions.
+              Start tracking your loans from local financial institutions
+              including GPSCCU, GBTI, Republic Bank, and more.
             </p>
             <Link href="/loans/new" className={buttonVariants()}>
               Add Your First Loan

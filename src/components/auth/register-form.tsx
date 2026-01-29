@@ -83,7 +83,7 @@ export function RegisterForm() {
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Create an account</CardTitle>
         <CardDescription>
-          Start managing your finances with GPSCCU
+          Start your journey to financial freedom
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>

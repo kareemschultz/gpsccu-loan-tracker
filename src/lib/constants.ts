@@ -2,10 +2,10 @@
 // Application Constants
 // ============================================================================
 
-export const APP_NAME = "GPSCCU Financial Platform";
-export const APP_SHORT_NAME = "GPSCCU Finance";
+export const APP_NAME = "FinTrack — Personal Finance Platform";
+export const APP_SHORT_NAME = "FinTrack";
 export const APP_DESCRIPTION =
-  "Comprehensive financial management and loan tracking platform for the Guyana Public Service Co-operative Credit Union.";
+  "Personal finance management platform for tracking loans, planning payments, and building a path to financial freedom.";
 export const APP_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 // Currency formatting
