@@ -21,6 +21,7 @@ const ROUTE_LABELS: Record<string, string> = {
   "/settings": "Settings",
   "/household": "Household",
   "/lenders": "Lenders",
+  "/taxes": "Tax Centre",
 };
 
 export function DashboardBreadcrumbs() {

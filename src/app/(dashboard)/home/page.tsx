@@ -16,6 +16,7 @@ import { formatCurrency } from "@/lib/constants";
 import { getCurrentUser } from "@/lib/auth-cache";
 import { DashboardWidgets } from "@/components/dashboard/dashboard-widgets";
 import { FinanceDashboardWidgets } from "@/components/dashboard/finance-dashboard-widgets";
+import { TaxDashboardWidget } from "@/components/taxes/tax-dashboard-widget";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -186,6 +187,12 @@ export default async function DashboardPage() {
         >
           📋 Bills
         </Link>
+        <Link
+          href="/taxes"
+          className={buttonVariants({ variant: "outline", size: "sm" })}
+        >
+          🇬🇾 Tax Calculator
+        </Link>
         {hasLoans && (
           <>
             <Link
@@ -206,6 +213,9 @@ export default async function DashboardPage() {
 
       {/* Finance Dashboard Widgets (Net worth, Cash flow, Bills, Goals, Budget, Transactions) */}
       <FinanceDashboardWidgets />
+
+      {/* Tax Summary Widget */}
+      <TaxDashboardWidget />
 
       {!hasLoans ? (
         /* Empty State for Loans */

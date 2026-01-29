@@ -36,6 +36,8 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   budgets: many(budgets),
   savingsGoals: many(savingsGoals),
   bills: many(bills),
+  taxProfile: one(taxProfiles),
+  taxCalculations: many(taxCalculations),
 }));
 
 // ============================================================================
@@ -702,6 +704,68 @@ export const billsRelations = relations(bills, ({ one }) => ({
 }));
 
 // ============================================================================
+// TAX PROFILES TABLE
+// ============================================================================
+export const taxProfiles = pgTable("tax_profiles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
+  positionPreset: varchar("position_preset", { length: 50 }),
+  positionTitle: varchar("position_title", { length: 100 }),
+  baseSalary: decimal("base_salary", { precision: 15, scale: 2 }).notNull().default("0"),
+  paymentFrequency: varchar("payment_frequency", { length: 20 }).notNull().default("monthly"),
+  taxableAllowances: decimal("taxable_allowances", { precision: 15, scale: 2 }).default("0"),
+  nonTaxableAllowances: decimal("non_taxable_allowances", { precision: 15, scale: 2 }).default("0"),
+  vacationAllowance: decimal("vacation_allowance", { precision: 15, scale: 2 }).default("0"),
+  qualificationType: varchar("qualification_type", { length: 20 }).default("none"),
+  overtimeIncome: decimal("overtime_income", { precision: 15, scale: 2 }).default("0"),
+  secondJobIncome: decimal("second_job_income", { precision: 15, scale: 2 }).default("0"),
+  childCount: integer("child_count").default(0),
+  insuranceType: varchar("insurance_type", { length: 30 }).default("none"),
+  customInsurancePremium: decimal("custom_insurance_premium", { precision: 15, scale: 2 }).default("0"),
+  loanPayment: decimal("loan_payment", { precision: 15, scale: 2 }).default("0"),
+  creditUnionDeduction: decimal("credit_union_deduction", { precision: 15, scale: 2 }).default("0"),
+  gratuityRate: decimal("gratuity_rate", { precision: 5, scale: 2 }).default("22.5"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const taxProfilesRelations = relations(taxProfiles, ({ one }) => ({
+  user: one(users, {
+    fields: [taxProfiles.userId],
+    references: [users.id],
+  }),
+}));
+
+// ============================================================================
+// TAX CALCULATIONS TABLE (Historical monthly calculations)
+// ============================================================================
+export const taxCalculations = pgTable("tax_calculations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  month: integer("month").notNull(),
+  year: integer("year").notNull(),
+  grossIncome: decimal("gross_income", { precision: 15, scale: 2 }).notNull(),
+  nisContribution: decimal("nis_contribution", { precision: 15, scale: 2 }).notNull(),
+  incomeTax: decimal("income_tax", { precision: 15, scale: 2 }).notNull(),
+  netPay: decimal("net_pay", { precision: 15, scale: 2 }).notNull(),
+  taxableIncome: decimal("taxable_income", { precision: 15, scale: 2 }).default("0"),
+  personalAllowance: decimal("personal_allowance", { precision: 15, scale: 2 }).default("0"),
+  childAllowance: decimal("child_allowance", { precision: 15, scale: 2 }).default("0"),
+  insuranceDeduction: decimal("insurance_deduction", { precision: 15, scale: 2 }).default("0"),
+  gratuityAmount: decimal("gratuity_amount", { precision: 15, scale: 2 }).default("0"),
+  effectiveTaxRate: decimal("effective_tax_rate", { precision: 5, scale: 2 }).default("0"),
+  metadata: jsonb("metadata").default({}),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const taxCalculationsRelations = relations(taxCalculations, ({ one }) => ({
+  user: one(users, {
+    fields: [taxCalculations.userId],
+    references: [users.id],
+  }),
+}));
+
+// ============================================================================
 // TYPE EXPORTS
 // ============================================================================
 export type User = typeof users.$inferSelect;
@@ -778,3 +842,9 @@ export type NewSavingsGoal = typeof savingsGoals.$inferInsert;
 
 export type Bill = typeof bills.$inferSelect;
 export type NewBill = typeof bills.$inferInsert;
+
+export type TaxProfile = typeof taxProfiles.$inferSelect;
+export type NewTaxProfile = typeof taxProfiles.$inferInsert;
+
+export type TaxCalculation = typeof taxCalculations.$inferSelect;
+export type NewTaxCalculation = typeof taxCalculations.$inferInsert;

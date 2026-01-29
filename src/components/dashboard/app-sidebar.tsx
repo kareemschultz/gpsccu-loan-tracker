@@ -29,6 +29,7 @@ import {
   WalletDone01Icon,
   UserGroupIcon,
   Building06Icon,
+  CalculatorIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -73,6 +74,7 @@ const navSections = [
   {
     label: "Tools",
     items: [
+      { name: "Tax Centre", href: "/taxes", icon: CalculatorIcon },
       { name: "Analytics", href: "/analytics", icon: Analytics01Icon },
       { name: "Reports", href: "/reports", icon: FileExportIcon },
     ],

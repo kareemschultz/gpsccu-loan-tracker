@@ -45,4 +45,5 @@ export const NAVIGATION = [
   { name: "Scenarios", href: "/scenarios", description: "What-if analysis" },
   { name: "Analytics", href: "/analytics", description: "Charts & insights" },
   { name: "Reports", href: "/reports", description: "Export data" },
+  { name: "Tax Centre", href: "/taxes", description: "GY Tax Calculator" },
 ] as const;
