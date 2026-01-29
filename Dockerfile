@@ -29,13 +29,8 @@ RUN npm install -g bun
 # Build the application
 RUN bun run build
 
-# Fix Next.js 15 standalone bug: missing client-reference-manifest files
-RUN find .next/server -name "*_client-reference-manifest.js" | while read src; do \
-      dest=".next/standalone/$src"; \
-      dir=$(dirname "$dest"); \
-      mkdir -p "$dir"; \
-      cp -n "$src" "$dest" 2>/dev/null || true; \
-    done
+# Fix Next.js 15 standalone bug: copy ALL server files that standalone missed
+RUN cp -r .next/server/* .next/standalone/.next/server/ 2>/dev/null || true
 
 # Stage 3: Runner (minimal production image)
 FROM node:22-alpine AS runner
