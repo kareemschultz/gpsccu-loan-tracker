@@ -67,7 +67,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
             H
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">Helm</span>
+            <span className="text-sm font-semibold">FundSight</span>
             <span className="text-xs text-muted-foreground">
               Personal Finance
             </span>

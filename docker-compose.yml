@@ -10,6 +10,7 @@ services:
       - DATABASE_URL=postgresql://postgres:FundS1ght@2026@fs-postgres:5432/fundsight
       - NEXTAUTH_SECRET=k8mRvX2pLwQ9nYjT4bHs7dFcA1eZuG6o
       - NEXTAUTH_URL=https://fundsight.karetechsolutions.com
+      - AUTH_TRUST_HOST=true
     depends_on:
       fs-postgres:
         condition: service_healthy

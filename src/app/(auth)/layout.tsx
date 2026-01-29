@@ -18,7 +18,7 @@ export default function AuthLayout({
           className="mb-8 flex items-center gap-3 transition-opacity hover:opacity-80"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm shadow-sm">
-            GF
+            FS
           </div>
           <span className="text-lg font-semibold tracking-tight">
             {APP_NAME}
@@ -32,7 +32,7 @@ export default function AuthLayout({
 
         {/* Footer */}
         <p className="mt-8 text-center text-xs text-muted-foreground">
-          Guyana Public Service Co-operative Credit Union
+          FundSight Personal Finance
         </p>
       </div>
     </div>
