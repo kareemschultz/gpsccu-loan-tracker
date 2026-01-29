@@ -53,9 +53,20 @@ export default async function LoansPage() {
 
       {userLoans.length === 0 ? (
         <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <p className="text-muted-foreground mb-4">
-              You haven't added any loans yet.
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="rounded-full bg-primary/10 p-6 mb-4">
+              <svg
+                className="h-10 w-10 text-primary"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7h-6.5l-.5-.5H8a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V9a2 2 0 00-2-2z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold mb-2">No loans active</h3>
+            <p className="text-muted-foreground mb-6 max-w-sm">
+              You haven&apos;t added any car loans yet. Add one to get started with tracking.
             </p>
             <Link href="/loans/new" className={buttonVariants()}>
               Add Your First Loan

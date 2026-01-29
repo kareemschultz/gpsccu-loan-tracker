@@ -1,4 +1,5 @@
 import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu"
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
@@ -9,7 +10,7 @@ function NavigationMenu({
   className,
   children,
   ...props
-}: NavigationMenuPrimitive.Root.Props) {
+}: any) {
   return (
     <NavigationMenuPrimitive.Root
       data-slot="navigation-menu"
@@ -28,7 +29,7 @@ function NavigationMenu({
 function NavigationMenuList({
   className,
   ...props
-}: NavigationMenuPrimitive.List.Props) {
+}: any) {
   return (
     <NavigationMenuPrimitive.List
       data-slot="navigation-menu-list"
@@ -44,7 +45,7 @@ function NavigationMenuList({
 function NavigationMenuItem({
   className,
   ...props
-}: NavigationMenuPrimitive.Item.Props) {
+}: any) {
   return (
     <NavigationMenuPrimitive.Item
       data-slot="navigation-menu-item"
@@ -62,7 +63,7 @@ function NavigationMenuTrigger({
   className,
   children,
   ...props
-}: NavigationMenuPrimitive.Trigger.Props) {
+}: any) {
   return (
     <NavigationMenuPrimitive.Trigger
       data-slot="navigation-menu-trigger"
@@ -78,7 +79,7 @@ function NavigationMenuTrigger({
 function NavigationMenuContent({
   className,
   ...props
-}: NavigationMenuPrimitive.Content.Props) {
+}: any) {
   return (
     <NavigationMenuPrimitive.Content
       data-slot="navigation-menu-content"
@@ -98,7 +99,7 @@ function NavigationMenuPositioner({
   align = "start",
   alignOffset = 0,
   ...props
-}: NavigationMenuPrimitive.Positioner.Props) {
+}: any) {
   return (
     <NavigationMenuPrimitive.Portal>
       <NavigationMenuPrimitive.Positioner
@@ -123,7 +124,7 @@ function NavigationMenuPositioner({
 function NavigationMenuLink({
   className,
   ...props
-}: NavigationMenuPrimitive.Link.Props) {
+}: any) {
   return (
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
@@ -136,7 +137,7 @@ function NavigationMenuLink({
 function NavigationMenuIndicator({
   className,
   ...props
-}: NavigationMenuPrimitive.Icon.Props) {
+}: any) {
   return (
     <NavigationMenuPrimitive.Icon
       data-slot="navigation-menu-indicator"

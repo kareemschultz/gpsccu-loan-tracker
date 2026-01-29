@@ -32,34 +32,32 @@ Multi-user car loan tracking platform for Guyanese financial institutions.
 - PostgreSQL 16+
 - Docker (optional)
 
-### Quick Start with Docker
+### Quick Start (Recommended)
 
+1. **Start the Database**:
+   ```bash
+   docker compose up -d db
+   ```
+2. **Setup the App**:
+   ```bash
+   bun install
+   bun run db:push
+   bun run db:seed
+   ```
+3. **Run the Dev Server**:
+   ```bash
+   bun run dev
+   ```
+   The app will typically start on `http://localhost:3000` (or `3001`/`3002` if ports are busy).
+
+### Full Docker Setup (Optional)
+
+To run the entire stack (App + DB) in Docker:
 ```bash
-# Start everything with Docker Compose
 docker compose up -d
-
-# The app will be available at http://localhost:3000
+# App available at http://localhost:3000
 ```
 
-### Manual Setup
-
-```bash
-# Install dependencies
-bun install
-
-# Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your database credentials
-
-# Push database schema
-bun run db:push
-
-# Seed lenders data
-bun run db/seed.ts
-
-# Start development server
-bun dev
-```
 
 ### Environment Variables
 

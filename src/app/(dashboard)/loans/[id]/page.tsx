@@ -5,9 +5,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { buttonVariants } from "@/components/ui/button-variants";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -72,7 +71,7 @@ export default async function LoanDetailPage({ params }: Props) {
   if (monthlyRate > 0 && monthlyPayment > current * monthlyRate) {
     remainingMonths = Math.ceil(
       Math.log(monthlyPayment / (monthlyPayment - current * monthlyRate)) /
-        Math.log(1 + monthlyRate)
+      Math.log(1 + monthlyRate)
     );
   }
 
