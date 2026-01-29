@@ -31,6 +31,11 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   householdMemberships: many(householdMembers),
   lenderReviews: many(lenderReviews),
   reviewVotes: many(reviewVotes),
+  accounts: many(accounts),
+  transactions: many(transactions),
+  budgets: many(budgets),
+  savingsGoals: many(savingsGoals),
+  bills: many(bills),
 }));
 
 // ============================================================================
@@ -443,6 +448,260 @@ export const benchmarkingOptInRelations = relations(benchmarkingOptIn, ({ one })
 }));
 
 // ============================================================================
+// ACCOUNTS TABLE (Financial Accounts - checking, savings, credit card, etc.)
+// ============================================================================
+export const accountTypes = ["checking", "savings", "credit_card", "cash", "investment", "loan", "other"] as const;
+
+export const accounts = pgTable("accounts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 100 }).notNull(),
+  type: varchar("type", { length: 30 }).notNull(), // checking, savings, credit_card, cash, investment, loan, other
+  institution: varchar("institution", { length: 100 }),
+  balance: decimal("balance", { precision: 15, scale: 2 }).notNull().default("0"),
+  currency: varchar("currency", { length: 10 }).default("GYD"),
+  color: varchar("color", { length: 20 }).default("#3b82f6"),
+  icon: varchar("icon", { length: 30 }).default("wallet"),
+  isActive: boolean("is_active").default(true).notNull(),
+  includeInNetWorth: boolean("include_in_net_worth").default(true).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const accountsRelations = relations(accounts, ({ one, many }) => ({
+  user: one(users, {
+    fields: [accounts.userId],
+    references: [users.id],
+  }),
+  transactions: many(transactions),
+  balanceHistory: many(accountBalances),
+}));
+
+// ============================================================================
+// ACCOUNT BALANCES TABLE (Historical balance tracking)
+// ============================================================================
+export const accountBalances = pgTable("account_balances", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  accountId: uuid("account_id").notNull().references(() => accounts.id, { onDelete: "cascade" }),
+  balance: decimal("balance", { precision: 15, scale: 2 }).notNull(),
+  recordedAt: timestamp("recorded_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const accountBalancesRelations = relations(accountBalances, ({ one }) => ({
+  account: one(accounts, {
+    fields: [accountBalances.accountId],
+    references: [accounts.id],
+  }),
+}));
+
+// ============================================================================
+// TRANSACTION CATEGORIES TABLE
+// ============================================================================
+export const transactionCategories = pgTable("transaction_categories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }), // null = system default
+  name: varchar("name", { length: 50 }).notNull(),
+  icon: varchar("icon", { length: 30 }).default("tag"),
+  color: varchar("color", { length: 20 }).default("#6b7280"),
+  type: varchar("type", { length: 20 }).notNull().default("expense"), // income, expense, both
+  isSystem: boolean("is_system").default(false).notNull(),
+  parentId: uuid("parent_id"), // for sub-categories
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const transactionCategoriesRelations = relations(transactionCategories, ({ one, many }) => ({
+  user: one(users, {
+    fields: [transactionCategories.userId],
+    references: [users.id],
+  }),
+  transactions: many(transactions),
+}));
+
+// ============================================================================
+// TRANSACTIONS TABLE (Income/Expense/Transfer tracking)
+// ============================================================================
+export const transactionTypes = ["income", "expense", "transfer"] as const;
+
+export const transactions = pgTable("transactions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  accountId: uuid("account_id").references(() => accounts.id, { onDelete: "set null" }),
+  toAccountId: uuid("to_account_id").references(() => accounts.id, { onDelete: "set null" }), // for transfers
+  categoryId: uuid("category_id").references(() => transactionCategories.id, { onDelete: "set null" }),
+
+  type: varchar("type", { length: 20 }).notNull(), // income, expense, transfer
+  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+  description: varchar("description", { length: 200 }),
+  merchant: varchar("merchant", { length: 100 }),
+  date: date("date").notNull(),
+  notes: text("notes"),
+
+  // Recurring
+  isRecurring: boolean("is_recurring").default(false).notNull(),
+  recurringFrequency: varchar("recurring_frequency", { length: 20 }), // daily, weekly, biweekly, monthly, quarterly, yearly
+  recurringEndDate: date("recurring_end_date"),
+  parentTransactionId: uuid("parent_transaction_id"), // links recurring instances
+
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const transactionsRelations = relations(transactions, ({ one }) => ({
+  user: one(users, {
+    fields: [transactions.userId],
+    references: [users.id],
+  }),
+  account: one(accounts, {
+    fields: [transactions.accountId],
+    references: [accounts.id],
+  }),
+  category: one(transactionCategories, {
+    fields: [transactions.categoryId],
+    references: [transactionCategories.id],
+  }),
+}));
+
+// ============================================================================
+// BUDGET CATEGORIES TABLE
+// ============================================================================
+export const budgetCategories = pgTable("budget_categories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }), // null = system default
+  name: varchar("name", { length: 50 }).notNull(),
+  icon: varchar("icon", { length: 30 }).default("folder"),
+  color: varchar("color", { length: 20 }).default("#6b7280"),
+  sortOrder: integer("sort_order").default(0),
+  isSystem: boolean("is_system").default(false).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const budgetCategoriesRelations = relations(budgetCategories, ({ one, many }) => ({
+  user: one(users, {
+    fields: [budgetCategories.userId],
+    references: [users.id],
+  }),
+  items: many(budgetItems),
+}));
+
+// ============================================================================
+// BUDGETS TABLE (Monthly budgets)
+// ============================================================================
+export const budgets = pgTable("budgets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  month: integer("month").notNull(), // 1-12
+  year: integer("year").notNull(),
+  totalIncome: decimal("total_income", { precision: 15, scale: 2 }).default("0"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const budgetsRelations = relations(budgets, ({ one, many }) => ({
+  user: one(users, {
+    fields: [budgets.userId],
+    references: [users.id],
+  }),
+  items: many(budgetItems),
+}));
+
+// ============================================================================
+// BUDGET ITEMS TABLE (Individual budget allocations per category)
+// ============================================================================
+export const budgetItems = pgTable("budget_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  budgetId: uuid("budget_id").notNull().references(() => budgets.id, { onDelete: "cascade" }),
+  categoryId: uuid("category_id").notNull().references(() => budgetCategories.id, { onDelete: "cascade" }),
+  budgeted: decimal("budgeted", { precision: 15, scale: 2 }).notNull().default("0"),
+  spent: decimal("spent", { precision: 15, scale: 2 }).default("0"),
+  rollover: boolean("rollover").default(false).notNull(), // carry unspent to next month
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const budgetItemsRelations = relations(budgetItems, ({ one }) => ({
+  budget: one(budgets, {
+    fields: [budgetItems.budgetId],
+    references: [budgets.id],
+  }),
+  category: one(budgetCategories, {
+    fields: [budgetItems.categoryId],
+    references: [budgetCategories.id],
+  }),
+}));
+
+// ============================================================================
+// SAVINGS GOALS TABLE
+// ============================================================================
+export const savingsGoals = pgTable("savings_goals", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 100 }).notNull(),
+  targetAmount: decimal("target_amount", { precision: 15, scale: 2 }).notNull(),
+  currentAmount: decimal("current_amount", { precision: 15, scale: 2 }).default("0").notNull(),
+  deadline: date("deadline"),
+  icon: varchar("icon", { length: 30 }).default("target"),
+  color: varchar("color", { length: 20 }).default("#8b5cf6"),
+  accountId: uuid("account_id").references(() => accounts.id, { onDelete: "set null" }),
+  isCompleted: boolean("is_completed").default(false).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const savingsGoalsRelations = relations(savingsGoals, ({ one }) => ({
+  user: one(users, {
+    fields: [savingsGoals.userId],
+    references: [users.id],
+  }),
+  account: one(accounts, {
+    fields: [savingsGoals.accountId],
+    references: [accounts.id],
+  }),
+}));
+
+// ============================================================================
+// BILLS TABLE (Recurring bills/subscriptions)
+// ============================================================================
+export const billFrequencies = ["weekly", "biweekly", "monthly", "quarterly", "semi_annual", "annual"] as const;
+
+export const bills = pgTable("bills", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 100 }).notNull(),
+  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+  dueDate: date("due_date").notNull(), // next due date
+  frequency: varchar("frequency", { length: 20 }).notNull().default("monthly"),
+  categoryId: uuid("category_id").references(() => transactionCategories.id, { onDelete: "set null" }),
+  accountId: uuid("account_id").references(() => accounts.id, { onDelete: "set null" }),
+  isAutoPay: boolean("is_auto_pay").default(false).notNull(),
+  isPaid: boolean("is_paid").default(false).notNull(),
+  lastPaidDate: date("last_paid_date"),
+  icon: varchar("icon", { length: 30 }).default("receipt"),
+  color: varchar("color", { length: 20 }).default("#ef4444"),
+  notes: text("notes"),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const billsRelations = relations(bills, ({ one }) => ({
+  user: one(users, {
+    fields: [bills.userId],
+    references: [users.id],
+  }),
+  category: one(transactionCategories, {
+    fields: [bills.categoryId],
+    references: [transactionCategories.id],
+  }),
+  account: one(accounts, {
+    fields: [bills.accountId],
+    references: [accounts.id],
+  }),
+}));
+
+// ============================================================================
 // TYPE EXPORTS
 // ============================================================================
 export type User = typeof users.$inferSelect;
@@ -492,3 +751,30 @@ export type NewNotification = typeof notifications.$inferInsert;
 
 export type NotificationPreference = typeof notificationPreferences.$inferSelect;
 export type NewNotificationPreference = typeof notificationPreferences.$inferInsert;
+
+export type Account = typeof accounts.$inferSelect;
+export type NewAccount = typeof accounts.$inferInsert;
+
+export type AccountBalance = typeof accountBalances.$inferSelect;
+export type NewAccountBalance = typeof accountBalances.$inferInsert;
+
+export type TransactionCategory = typeof transactionCategories.$inferSelect;
+export type NewTransactionCategory = typeof transactionCategories.$inferInsert;
+
+export type Transaction = typeof transactions.$inferSelect;
+export type NewTransaction = typeof transactions.$inferInsert;
+
+export type BudgetCategory = typeof budgetCategories.$inferSelect;
+export type NewBudgetCategory = typeof budgetCategories.$inferInsert;
+
+export type Budget = typeof budgets.$inferSelect;
+export type NewBudget = typeof budgets.$inferInsert;
+
+export type BudgetItem = typeof budgetItems.$inferSelect;
+export type NewBudgetItem = typeof budgetItems.$inferInsert;
+
+export type SavingsGoal = typeof savingsGoals.$inferSelect;
+export type NewSavingsGoal = typeof savingsGoals.$inferInsert;
+
+export type Bill = typeof bills.$inferSelect;
+export type NewBill = typeof bills.$inferInsert;

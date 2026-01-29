@@ -5,6 +5,12 @@ import Link from "next/link";
 
 const ROUTE_LABELS: Record<string, string> = {
   "/": "Dashboard",
+  "/home": "Dashboard",
+  "/accounts": "Accounts",
+  "/transactions": "Transactions",
+  "/budgets": "Budgets",
+  "/goals": "Savings Goals",
+  "/bills": "Bills",
   "/loans": "My Loans",
   "/loans/new": "Add Loan",
   "/tracker": "Payments",

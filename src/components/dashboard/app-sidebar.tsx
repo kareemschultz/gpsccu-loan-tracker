@@ -32,16 +32,51 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
-const navigation = [
-  { name: "Dashboard", href: "/home", icon: Home03Icon },
-  { name: "My Loans", href: "/loans", icon: Car01Icon },
-  { name: "Payments", href: "/tracker", icon: WalletDone01Icon },
-  { name: "Planning", href: "/planning", icon: Calendar03Icon },
-  { name: "Scenarios", href: "/scenarios", icon: ChartLineData02Icon },
-  { name: "Analytics", href: "/analytics", icon: Analytics01Icon },
-  { name: "Reports", href: "/reports", icon: FileExportIcon },
-  { name: "Household", href: "/household", icon: UserGroupIcon },
-  { name: "Lenders", href: "/lenders", icon: Building06Icon },
+const navSections = [
+  {
+    label: "Overview",
+    items: [
+      { name: "Dashboard", href: "/home", icon: Home03Icon },
+    ],
+  },
+  {
+    label: "Money",
+    items: [
+      { name: "Accounts", href: "/accounts", icon: Building06Icon },
+      { name: "Transactions", href: "/transactions", icon: WalletDone01Icon },
+      { name: "Budgets", href: "/budgets", icon: Calendar03Icon },
+    ],
+  },
+  {
+    label: "Goals",
+    items: [
+      { name: "Savings Goals", href: "/goals", icon: ChartLineData02Icon },
+      { name: "Bills", href: "/bills", icon: FileExportIcon },
+    ],
+  },
+  {
+    label: "Loans",
+    items: [
+      { name: "My Loans", href: "/loans", icon: Car01Icon },
+      { name: "Payments", href: "/tracker", icon: WalletDone01Icon },
+      { name: "Planning", href: "/planning", icon: Calendar03Icon },
+      { name: "Scenarios", href: "/scenarios", icon: ChartLineData02Icon },
+    ],
+  },
+  {
+    label: "Community",
+    items: [
+      { name: "Household", href: "/household", icon: UserGroupIcon },
+      { name: "Lenders", href: "/lenders", icon: Building06Icon },
+    ],
+  },
+  {
+    label: "Tools",
+    items: [
+      { name: "Analytics", href: "/analytics", icon: Analytics01Icon },
+      { name: "Reports", href: "/reports", icon: FileExportIcon },
+    ],
+  },
 ];
 
 interface AppSidebarProps {
@@ -80,29 +115,31 @@ export function AppSidebar({ user }: AppSidebarProps) {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navigation.map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== "/home" && pathname.startsWith(item.href));
-                return (
-                  <SidebarMenuItem key={item.name}>
-                    <SidebarMenuButton
-                      render={<Link href={item.href} />}
-                      isActive={isActive}
-                    >
-                      <HugeiconsIcon icon={item.icon} size={20} />
-                      <span>{item.name}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {navSections.map((section) => (
+          <SidebarGroup key={section.label}>
+            <SidebarGroupLabel>{section.label}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {section.items.map((item) => {
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== "/home" && pathname.startsWith(item.href));
+                  return (
+                    <SidebarMenuItem key={item.name}>
+                      <SidebarMenuButton
+                        render={<Link href={item.href} />}
+                        isActive={isActive}
+                      >
+                        <HugeiconsIcon icon={item.icon} size={20} />
+                        <span>{item.name}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
 
         <SidebarGroup>
           <SidebarGroupLabel>Account</SidebarGroupLabel>

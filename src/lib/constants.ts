@@ -33,7 +33,12 @@ export function formatPercent(value: number, decimals: number = 1): string {
 
 // Navigation items (single source of truth)
 export const NAVIGATION = [
-  { name: "Dashboard", href: "/home", description: "Portfolio overview" },
+  { name: "Dashboard", href: "/home", description: "Financial overview" },
+  { name: "Accounts", href: "/accounts", description: "Financial accounts" },
+  { name: "Transactions", href: "/transactions", description: "Income & expenses" },
+  { name: "Budgets", href: "/budgets", description: "Monthly budgets" },
+  { name: "Savings Goals", href: "/goals", description: "Goal tracking" },
+  { name: "Bills", href: "/bills", description: "Recurring bills" },
   { name: "My Loans", href: "/loans", description: "Manage loans" },
   { name: "Payments", href: "/tracker", description: "Record payments" },
   { name: "Planning", href: "/planning", description: "Payment strategy" },

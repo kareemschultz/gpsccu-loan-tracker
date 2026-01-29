@@ -56,6 +56,234 @@ interface Payment {
   source: string;
 }
 
+// ============================================================================
+// SPENDING ANALYTICS COMPONENT
+// ============================================================================
+function SpendingAnalytics() {
+  const [transactions, setTransactions] = useState<{ id: string; type: string; amount: string; date: string; category: { name: string; color: string } | null }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/transactions?limit=500")
+      .then((r) => r.json())
+      .then(setTransactions)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const formatCurrencyLocal = (amount: number) =>
+    new Intl.NumberFormat("en-GY", { style: "currency", currency: "GYD", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
+
+  const spendingByCategory = useMemo(() => {
+    const cats: Record<string, { name: string; value: number; color: string }> = {};
+    transactions
+      .filter((t) => t.type === "expense")
+      .forEach((t) => {
+        const name = t.category?.name || "Uncategorized";
+        const color = t.category?.color || "#6b7280";
+        if (!cats[name]) cats[name] = { name, value: 0, color };
+        cats[name].value += parseFloat(t.amount);
+      });
+    return Object.values(cats).sort((a, b) => b.value - a.value);
+  }, [transactions]);
+
+  const monthlyComparison = useMemo(() => {
+    const months: Record<string, Record<string, number>> = {};
+    transactions
+      .filter((t) => t.type === "expense")
+      .forEach((t) => {
+        const d = new Date(t.date);
+        const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        const catName = t.category?.name || "Other";
+        if (!months[monthKey]) months[monthKey] = {};
+        months[monthKey][catName] = (months[monthKey][catName] || 0) + parseFloat(t.amount);
+      });
+    return Object.entries(months)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .slice(-6)
+      .map(([month, cats]) => ({
+        month: month.split("-")[1] + "/" + month.split("-")[0].slice(2),
+        ...cats,
+      }));
+  }, [transactions]);
+
+  const COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#ec4899", "#f97316"];
+
+  if (loading) return <Card><CardContent className="py-12 text-center text-muted-foreground">Loading spending data...</CardContent></Card>;
+
+  return (
+    <>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Spending by Category</CardTitle>
+            <CardDescription>Where your money goes</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {spendingByCategory.length > 0 ? (
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={spendingByCategory} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={3} dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                      {spendingByCategory.map((entry, i) => (
+                        <Cell key={`cell-${i}`} fill={entry.color || COLORS[i % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(v: number) => formatCurrencyLocal(v)} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="h-72 flex items-center justify-center text-muted-foreground">No expense data yet</div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Top Spending Categories</CardTitle>
+            <CardDescription>Ranked by total amount</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {spendingByCategory.slice(0, 8).map((cat) => {
+              const maxVal = spendingByCategory[0]?.value || 1;
+              return (
+                <div key={cat.name} className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">{cat.name}</span>
+                    <span className="tabular-nums">{formatCurrencyLocal(cat.value)}</span>
+                  </div>
+                  <Progress value={(cat.value / maxVal) * 100} className="h-2" />
+                </div>
+              );
+            })}
+            {spendingByCategory.length === 0 && <p className="text-muted-foreground text-sm">No expenses recorded</p>}
+          </CardContent>
+        </Card>
+      </div>
+
+      {monthlyComparison.length > 1 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Monthly Spending Comparison</CardTitle>
+            <CardDescription>Category spending over time</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyComparison}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis dataKey="month" className="text-xs" />
+                  <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} className="text-xs" />
+                  <Tooltip formatter={(v: number) => formatCurrencyLocal(v)} />
+                  <Legend />
+                  {spendingByCategory.slice(0, 6).map((cat, i) => (
+                    <Bar key={cat.name} dataKey={cat.name} fill={cat.color || COLORS[i % COLORS.length]} stackId="a" />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </>
+  );
+}
+
+// ============================================================================
+// CASH FLOW ANALYTICS COMPONENT
+// ============================================================================
+function CashFlowAnalytics() {
+  const [transactions, setTransactions] = useState<{ id: string; type: string; amount: string; date: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/transactions?limit=1000")
+      .then((r) => r.json())
+      .then(setTransactions)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const formatCurrencyLocal = (amount: number) =>
+    new Intl.NumberFormat("en-GY", { style: "currency", currency: "GYD", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
+
+  const monthlyCashFlow = useMemo(() => {
+    const months: Record<string, { income: number; expenses: number }> = {};
+    transactions.forEach((t) => {
+      const d = new Date(t.date);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      if (!months[key]) months[key] = { income: 0, expenses: 0 };
+      if (t.type === "income") months[key].income += parseFloat(t.amount);
+      else if (t.type === "expense") months[key].expenses += parseFloat(t.amount);
+    });
+    let runningNet = 0;
+    return Object.entries(months)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .slice(-12)
+      .map(([month, data]) => {
+        runningNet += data.income - data.expenses;
+        return {
+          month: month.split("-")[1] + "/" + month.split("-")[0].slice(2),
+          income: data.income,
+          expenses: data.expenses,
+          net: data.income - data.expenses,
+          cumulative: runningNet,
+        };
+      });
+  }, [transactions]);
+
+  if (loading) return <Card><CardContent className="py-12 text-center text-muted-foreground">Loading cash flow data...</CardContent></Card>;
+  if (monthlyCashFlow.length === 0) return <Card><CardContent className="py-12 text-center text-muted-foreground">Add transactions to see cash flow analytics</CardContent></Card>;
+
+  return (
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Income vs Expenses</CardTitle>
+          <CardDescription>Monthly comparison over time</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={monthlyCashFlow}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="month" className="text-xs" />
+                <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} className="text-xs" />
+                <Tooltip formatter={(v: number) => formatCurrencyLocal(v)} />
+                <Legend />
+                <Bar dataKey="income" name="Income" fill="#22c55e" />
+                <Bar dataKey="expenses" name="Expenses" fill="#ef4444" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Net Cash Flow Trend</CardTitle>
+          <CardDescription>Cumulative net income over time</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={monthlyCashFlow}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="month" className="text-xs" />
+                <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} className="text-xs" />
+                <Tooltip formatter={(v: number) => formatCurrencyLocal(v)} />
+                <Legend />
+                <Area type="monotone" dataKey="net" name="Monthly Net" stroke="#3b82f6" fill="#bfdbfe" strokeWidth={2} />
+                <Area type="monotone" dataKey="cumulative" name="Cumulative" stroke="#8b5cf6" fill="#ddd6fe" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
 export default function AnalyticsPage() {
   const [loans, setLoans] = useState<Loan[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -315,12 +543,24 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+      <Tabs defaultValue="spending" className="space-y-6">
+        <TabsList className="flex-wrap">
+          <TabsTrigger value="spending">Spending</TabsTrigger>
+          <TabsTrigger value="cashflow">Cash Flow</TabsTrigger>
+          <TabsTrigger value="overview">Loan Overview</TabsTrigger>
           <TabsTrigger value="comparison">Multi-Loan</TabsTrigger>
           <TabsTrigger value="trends">Trends</TabsTrigger>
         </TabsList>
+
+        {/* Spending Analytics Tab */}
+        <TabsContent value="spending" className="space-y-6">
+          <SpendingAnalytics />
+        </TabsContent>
+
+        {/* Cash Flow Tab */}
+        <TabsContent value="cashflow" className="space-y-6">
+          <CashFlowAnalytics />
+        </TabsContent>
 
         <TabsContent value="overview" className="space-y-6">
           {/* Health Score & Summary */}

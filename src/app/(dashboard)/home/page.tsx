@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/constants";
 import { getCurrentUser } from "@/lib/auth-cache";
 import { DashboardWidgets } from "@/components/dashboard/dashboard-widgets";
+import { FinanceDashboardWidgets } from "@/components/dashboard/finance-dashboard-widgets";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -149,16 +150,67 @@ export default async function DashboardPage() {
           Welcome back, {user.name?.split(" ")[0]}
         </h1>
         <p className="text-muted-foreground">
-          {hasLoans
-            ? "Here\u2019s an overview of your loan portfolio"
-            : "Get started by adding your first loan"}
+          Here&apos;s your financial overview at a glance
         </p>
       </div>
 
+      {/* Quick Action Buttons */}
+      <div className="flex flex-wrap gap-2">
+        <Link
+          href="/transactions"
+          className={buttonVariants({ variant: "outline", size: "sm" })}
+        >
+          💸 Add Transaction
+        </Link>
+        <Link
+          href="/accounts"
+          className={buttonVariants({ variant: "outline", size: "sm" })}
+        >
+          🏦 Accounts
+        </Link>
+        <Link
+          href="/budgets"
+          className={buttonVariants({ variant: "outline", size: "sm" })}
+        >
+          📊 Budget
+        </Link>
+        <Link
+          href="/goals"
+          className={buttonVariants({ variant: "outline", size: "sm" })}
+        >
+          🎯 Goals
+        </Link>
+        <Link
+          href="/bills"
+          className={buttonVariants({ variant: "outline", size: "sm" })}
+        >
+          📋 Bills
+        </Link>
+        {hasLoans && (
+          <>
+            <Link
+              href="/loans/new"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              ➕ Add Loan
+            </Link>
+            <Link
+              href="/tracker"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              💳 Record Payment
+            </Link>
+          </>
+        )}
+      </div>
+
+      {/* Finance Dashboard Widgets (Net worth, Cash flow, Bills, Goals, Budget, Transactions) */}
+      <FinanceDashboardWidgets />
+
       {!hasLoans ? (
-        /* Empty State */
+        /* Empty State for Loans */
         <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16">
+          <CardContent className="flex flex-col items-center justify-center py-12">
             <div className="rounded-full bg-primary/10 p-6 mb-4">
               <svg
                 className="h-12 w-12 text-primary"
@@ -174,7 +226,7 @@ export default async function DashboardPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold mb-2">No loans yet</h3>
+            <h3 className="text-lg font-semibold mb-2">No loans tracked yet</h3>
             <p className="text-muted-foreground text-center max-w-sm mb-6">
               Start tracking your loans from financial institutions including
               GBTI, Republic Bank, and more.
@@ -186,39 +238,6 @@ export default async function DashboardPage() {
         </Card>
       ) : (
         <>
-          {/* Quick Action Buttons */}
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href="/loans/new"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              ➕ Add Loan
-            </Link>
-            <Link
-              href="/tracker"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              💳 Record Payment
-            </Link>
-            <Link
-              href="/planning"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              📋 Plan Strategy
-            </Link>
-            <Link
-              href="/scenarios"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              🔄 Compare Scenarios
-            </Link>
-            <Link
-              href="/reports"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              📄 Export Report
-            </Link>
-          </div>
 
           {/* Top Row — Progress Ring, Health Gauge, Countdowns */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
