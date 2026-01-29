@@ -2,62 +2,43 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
 
-# Install dependencies for native modules
 RUN apk add --no-cache libc6-compat
-
-# Copy package files
 COPY package.json bun.lock* ./
-
-# Install bun and dependencies
 RUN npm install -g bun && bun install --frozen-lockfile
 
 # Stage 2: Builder
 FROM node:22-alpine AS builder
 WORKDIR /app
 
-# Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Set environment for build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# Install bun for build
-RUN npm install -g bun
+RUN npm install -g bun && bun run build
 
-# Build the application
-RUN bun run build
-
-# Fix Next.js 15 standalone bug: copy ALL server files that standalone missed
-RUN cp -r .next/server/* .next/standalone/.next/server/ 2>/dev/null || true
-
-# Stage 3: Runner (minimal production image)
+# Stage 3: Runner
 FROM node:22-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy public assets
+# Copy full build (not standalone) — avoids Next.js 15 manifest bugs
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 
-# Copy standalone build
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Switch to non-root user
 USER nextjs
 
-# Expose port
 EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Start the application
-CMD ["node", "server.js"]
+CMD ["node_modules/.bin/next", "start"]

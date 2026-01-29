@@ -3,9 +3,6 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   serverExternalPackages: ["pg"],
 
-  // Enable standalone output for Docker deployment
-  output: "standalone",
-
   // Strip X-Powered-By header
   poweredByHeader: false,
 
